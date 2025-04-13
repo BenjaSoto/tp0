@@ -36,7 +36,7 @@ int main(void)
 	log_info(logger,puerto);
 	/* ---------------- LEER DE CONSOLA ---------------- */
 
-	leer_consola(logger);
+	// leer_consola(logger);
 
 	/*---------------------------------------------------PARTE 3-------------------------------------------------------------*/
 
@@ -46,7 +46,7 @@ int main(void)
 	conexion = crear_conexion(ip, puerto);
 
 	// Enviamos al servidor el valor de CLAVE como mensaje
-
+	enviar_mensaje(valor,conexion);
 	// Armamos y enviamos el paquete
 	paquete(conexion);
 
@@ -71,7 +71,7 @@ t_log *iniciar_logger(void)
 t_config *iniciar_config(void)
 {
 	t_config *nuevo_config;
-	nuevo_config = config_create("./cliente.config");
+	nuevo_config = config_create("/home/utnso/tp0/client/cliente.config");
 
 	if(nuevo_config==NULL){
 		printf("No se pudo iniciar el config\n");
@@ -107,9 +107,32 @@ void paquete(int conexion)
 	// Ahora toca lo divertido!
 	char *leido;
 	t_paquete *paquete;
+	//creo el paquete
+	paquete = crear_paquete();
+	
 
+	while(1){
+		// La primera te la dejo de yapa
+		leido = readline("> ");
+
+		if(!leido){
+			break;
+		}
+		if(!strncmp(leido,"exit",4)){
+			break;
+		}
+		if(leido){
+		agregar_a_paquete(paquete,leido,strlen(leido)+1);
+		enviar_paquete(paquete, conexion);
+		free(leido);
+		}
+
+	
+
+	}
 	// Leemos y esta vez agregamos las lineas al paquete
-
+	eliminar_paquete(paquete);
+	free(leido);
 	// ¡No te olvides de liberar las líneas y el paquete antes de regresar!
 }
 
@@ -117,4 +140,13 @@ void terminar_programa(int conexion, t_log *logger, t_config *config)
 {
 	/* Y por ultimo, hay que liberar lo que utilizamos (conexion, log y config)
 	  con las funciones de las commons y del TP mencionadas en el enunciado */
+	  if(logger !=NULL){
+		log_destroy(logger);
+	  }
+	  if(config !=NULL){
+		config_destroy(config);
+	  }
+	  if(conexion != NULL){
+		liberar_conexion(conexion);
+	  }
 }
