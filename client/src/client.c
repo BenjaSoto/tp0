@@ -109,8 +109,6 @@ void paquete(int conexion)
 	t_paquete *paquete;
 	//creo el paquete
 	paquete = crear_paquete();
-	
-
 	while(1){
 		// La primera te la dejo de yapa
 		leido = readline("> ");
@@ -126,14 +124,11 @@ void paquete(int conexion)
 		enviar_paquete(paquete, conexion);
 		free(leido);
 		}
-
-	
-
 	}
 	// Leemos y esta vez agregamos las lineas al paquete
 	eliminar_paquete(paquete);
-	free(leido);
 	// ¡No te olvides de liberar las líneas y el paquete antes de regresar!
+	free(leido);
 }
 
 void terminar_programa(int conexion, t_log *logger, t_config *config)
